@@ -60,7 +60,7 @@ driver = getChromeDriver()
 # driver = getHeadlessChromeDriver()
 
 # 起動
-driver.set_window_size(600, 700)
+driver.set_window_size(800, 700)
 driver.get("https://www.google.com/")
 
 # 検索画面でtext入力

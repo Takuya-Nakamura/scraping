@@ -1,0 +1,137 @@
+### Google App Scriptにコピペして動かす
+### Scrapingのサンプル。ログインはサイトに寄って難しい..
+/**
+* メニューに[スクリプト実行]を追加
+*
+*/
+function onOpen() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet();
+  var entries = [{
+    name:"scrap",
+    functionName:"main"
+  }];
+  
+  sheet.addMenu("スクリプト実行", entries)
+      
+}
+  
+function main() {
+  // Browser.msgBox("確認", "Hello World", Browser.Buttons.OK)
+  
+  var html = fetchHtml()
+  var data = parseHtml(html)
+  Logger.log(data)
+  putToSheet(data)
+}
+
+/**
+* HTMLを取得。
+* ログインしてcookieを取得して
+* 
+* [参考]loginについて
+* http://katsulog.tech/get-the-source-after-logging-in-to-the-site-when-scraping-with-googlespreadsheet/
+* 明示的にPOSTして情報を取得する..
+*
+*/
+function fetchHtml(){
+  var url ="https://www.amazon.co.jp/gp/most-wished-for/books/466298?ref_=Oct_s9_apbd_omwf_hd_bw_b1xIw_S&pf_rd_r=8BASA5TD304XP3YNQVFB&pf_rd_p=7e368783-4adf-58dd-9962-49157bc43e0f&pf_rd_s=merchandised-search-10&pf_rd_t=BROWSE&pf_rd_i=466298"
+  var response = UrlFetchApp.fetch(url);
+  return response.getContentText('UTF-8');
+
+}
+
+
+/**
+* 特定サイトにログイン
+* oneTimeTokenが必要な場合はまずログイン画面でその値をとってくる必要あり
+* user-agentが指定できないのでそれで弾かれたりする可能性もあり。
+*/
+function fetchHtmlWithLogin(){
+
+  //login 
+  var loginUrl = "https://crowdworks.jp/login" // login
+  var payload = {
+    "username":"",
+    "password":''
+  }
+  
+  var options ={
+    "method" : "POST",
+    "payload" : payload,
+    "followRedirects" : false,
+    //"muteHttpExceptions":true
+  }
+  var postResponse = UrlFetchApp.fetch(loginUrl, options);
+  var cookies = postResponse.getHeaders()["Set-Cookie"];
+  
+  //Logger.log(cookies)
+  var headers = {"Cookie":cookies };
+
+  //fetch 
+  options = {
+    method : "get",
+    headers : headers,
+    //followRedirects: true, //リダイレクトあり
+  }
+  
+  var url ="https://crowdworks.jp/dashboard"
+  var response = UrlFetchApp.fetch(url, options);
+  return response.getContentText('UTF-8');
+  
+}
+
+/**
+* Parser: HTML/XML Parser for Google Apps Scrip
+* 1Jrnqmfa6dNvBTzIgTeilzdo6zk0aUUhcXwLlQEbtkhaRR-fi5eAf4tBJ
+* getElementById
+* getELementsByClassName
+* getElementsByTagName
+* しか使えなくて、複合的なCSSセレクタの指定ができない様子。
+* 繰り返し使うことで目的の要素に行けるかな。
+* ⇒HTMLのフォーマットに厳しい..すぐエラーになる。だみだ　
+*/
+
+/**
+* Parser ★
+* [参考]:https://www.kotanin0.work/entry/2019/01/06/200000
+* [参考] https://rabbitfoot.xyz/gas-scraiping-to-amazon/
+* 特定パターン文字列に挟まれた部分の文字列を取得する。
+* parserというよりは、マッチング・抽出処理。
+* 繰り返し取得する場合はiterate()を使う
+* 指定が格好悪くなるけど、まあ文字列取るだけなら、これでもいいのかなあ..
+*/
+// 　複雑な条件だとやっぱり難しくて、最終的には正規表現を使うことになりそう。
+// 
+
+function parseHtml(html){
+  var from ='<div class="a-section a-spacing-small"><img alt="'
+  var to='" src'
+  
+  var scraped = Parser
+  .data(html)
+  .from(from)
+  .to(to)
+  //.build() //.iterate()で複数取得
+  .iterate()
+  return scraped
+}
+
+/**
+* シートに出力
+*
+*/
+function putToSheet(data){
+  var sheet = SpreadsheetApp.getActiveSheet();
+  //sheet.getRange(1,1).setValue(data)
+  //  sheet.getRange(1, 1, data.length, 1).setValues(data);
+  var i = 1
+  data.forEach(function(str){
+    sheet.getRange(i,1).setValue(str);
+    i++
+  })
+  
+}
+
+
+
+
