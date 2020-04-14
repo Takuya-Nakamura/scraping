@@ -57,7 +57,7 @@ output = ''
 driver = getChromeDriver()
 # driver = getHeadlessChromeDriver()
 
-driver.get('https://news.yahoo.co.jp')
+driver.set_window_size(600, 700)
 
 for url in data:
     driver.get(url)

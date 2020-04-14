@@ -1,0 +1,55 @@
+## beautifulsoup セレクタ
+説明	コード例
+子要素	soup.head
+タグ全検索	soup.find_all('li')
+1件検索	soup.find('li')
+属性検索	soup.find('li', href="html://www.google.com/")
+class検索	soup.find('a', class_="first")
+属性取得	first_link_element['href']
+テキスト要素	first_link_element.string
+親要素	first_link_element.parent
+
+説明	コード例
+タグ検索	soup.select('li')
+1件検索	soup.select_one('li')
+属性検索	soup.select('a[href="http://www.google.com"]')
+属性存在	soup.select('a[data])
+class検索	soup.select('a.first')
+
+
+
+## selenium 
+
+### click後などの待ち時間設定
+■共通タイムアウト設定
+driver.implicitly_wait(10)
+
+■個別の設定
+# ページ上のすべての要素が読み込まれるまで待機（15秒でタイムアウト判定）
+WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
+
+# ID指定したページ上の要素が読み込まれるまで待機（15秒でタイムアウト判定）
+WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, 'ID名')))
+
+# CLASS名指定したページ上の要素が読み込まれるまで待機（15秒でタイムアウト判定）
+WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, 'CLASS名')))
+
+https://kurozumi.github.io/selenium-python/waits.html
+## 指定できるものリスト
+itle_is
+title_contains
+presence_of_element_located
+visibility_of_element_located
+visibility_of
+presence_of_all_elements_located
+text_to_be_present_in_element
+text_to_be_present_in_element_value
+frame_to_be_available_and_switch_to_it
+invisibility_of_element_located
+element_to_be_clickable
+staleness_of
+element_to_be_selected
+element_located_to_be_selected
+element_selection_state_to_be
+element_located_selection_state_to_be
+alert_is_present
