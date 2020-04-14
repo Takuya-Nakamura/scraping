@@ -15,4 +15,7 @@ pip install chromedriver-binary
 
 ## ツール
 ### Yahoo_news(req, selenium)
-ヤフーニュースのトップページにアクセスして、各カテゴリのトップ記事リストのカテゴリ、タイトル、URLをCSV形式で返す。
+ヤフーニュースのトップページにアクセスして、各カテゴリのトップ記事リストのカテゴリ、タイトル、URLをCSV形式で出力する。
+
+<img width="600" src="https://user-images.githubusercontent.com/1549408/79186200-f4a41200-7e53-11ea-987e-120057be15ba.gif">
+
